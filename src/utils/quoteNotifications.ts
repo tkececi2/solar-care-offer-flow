@@ -1,24 +1,44 @@
 
 // This file contains utilities for sending quote notifications to the site owner
+import emailjs from '@emailjs/browser';
+
+// EmailJS servis bilgileri
+// NOT: Bu bilgiler gerçek bir uygulamada güvenli bir şekilde saklanmalıdır.
+const EMAIL_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
+const EMAIL_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
+const EMAIL_USER_ID = 'YOUR_EMAILJS_USER_ID';
 
 /**
- * Sends the quote to the site owner
- * Note: This is a mock implementation. In a production environment,
- * this would connect to a backend service or API to send emails.
+ * Sends the quote to the site owner using EmailJS
  */
-export const sendQuoteToOwner = (quoteDetails: any) => {
-  // Log the notification (for demonstration purposes)
-  console.log('Quote notification would be sent to site owner:', quoteDetails);
-  
-  // In a real implementation with Supabase or another backend:
-  // 1. This would call an API endpoint or serverless function
-  // 2. The backend would handle sending an email to the site owner
-  // 3. It might also store the quote in a database for the owner's dashboard
-  
-  return {
-    success: true,
-    message: 'Quote notification sent successfully (mock)'
-  };
+export const sendQuoteToOwner = async (quoteDetails: any) => {
+  try {
+    console.log('Sending quote notification to site owner:', quoteDetails);
+    
+    // EmailJS ile e-posta gönderimi
+    const response = await emailjs.send(
+      EMAIL_SERVICE_ID,
+      EMAIL_TEMPLATE_ID,
+      {
+        subject: quoteDetails.subject,
+        message: quoteDetails.body,
+        to_email: 'site.owner@example.com', // Site sahibinin e-posta adresi
+      },
+      EMAIL_USER_ID
+    );
+
+    console.log('Email sent successfully:', response);
+    return {
+      success: true,
+      message: 'Teklif bildirimi başarıyla gönderildi'
+    };
+  } catch (error) {
+    console.error('Failed to send quote notification:', error);
+    return {
+      success: false,
+      message: 'Teklif bildirimi gönderilirken bir hata oluştu'
+    };
+  }
 };
 
 /**
@@ -53,4 +73,3 @@ export const formatQuoteForEmail = (quoteDetails: any, packageDetails: any) => {
     `.trim()
   };
 };
-

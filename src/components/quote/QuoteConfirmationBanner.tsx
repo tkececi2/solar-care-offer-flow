@@ -13,7 +13,7 @@ export function QuoteConfirmationBanner() {
           Teklifiniz ekibimize iletildi. En kısa sürede sizinle iletişime geçeceğiz.
         </p>
         <p className="text-sm text-green-600">
-          Bilgileriniz sistem yöneticimize otomatik olarak gönderilmiştir.
+          Teklifiniz site yöneticisine e-posta olarak gönderilmiştir.
         </p>
       </div>
     </div>
