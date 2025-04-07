@@ -21,6 +21,15 @@ interface PlantInfoStepProps {
 }
 
 export const PlantInfoStep = ({ form, selectedPackage, onNextStep }: PlantInfoStepProps) => {
+  // First validate the required fields before proceeding
+  const handleContinue = () => {
+    form.trigger(["plantCapacity"]).then((isValid) => {
+      if (isValid) {
+        onNextStep();
+      }
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
@@ -92,7 +101,11 @@ export const PlantInfoStep = ({ form, selectedPackage, onNextStep }: PlantInfoSt
       />
 
       <div className="flex justify-end">
-        <Button type="button" onClick={onNextStep}>
+        <Button 
+          type="button" 
+          onClick={handleContinue}
+          className="bg-solar-600 hover:bg-solar-700 text-white"
+        >
           Devam Et
           <ChevronRight className="ml-2 h-4 w-4" />
         </Button>

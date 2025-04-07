@@ -20,6 +20,14 @@ interface CustomerInfoStepProps {
 }
 
 export const CustomerInfoStep = ({ form, onPrevStep, onNextStep }: CustomerInfoStepProps) => {
+  const handleContinue = () => {
+    form.trigger(["customerName", "customerEmail"]).then((isValid) => {
+      if (isValid) {
+        onNextStep();
+      }
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
@@ -109,7 +117,11 @@ export const CustomerInfoStep = ({ form, onPrevStep, onNextStep }: CustomerInfoS
           <ChevronLeft className="mr-2 h-4 w-4" />
           Geri
         </Button>
-        <Button type="button" onClick={onNextStep}>
+        <Button 
+          type="button" 
+          onClick={handleContinue}
+          className="bg-solar-600 hover:bg-solar-700 text-white"
+        >
           Devam Et
           <ChevronRight className="ml-2 h-4 w-4" />
         </Button>

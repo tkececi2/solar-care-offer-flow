@@ -10,30 +10,30 @@ interface StepIndicatorProps {
 export const StepIndicator = ({ currentStep }: StepIndicatorProps) => {
   return (
     <div className="mb-12">
-      <div className="progress-steps">
-        <div className="step">
-          <div className={`step-circle ${currentStep === "plant-info" ? "active" : currentStep === "customer-info" || currentStep === "review" ? "complete" : ""}`}>
+      <div className="flex items-center justify-between">
+        <div className={`flex flex-col items-center ${currentStep === "plant-info" ? "text-solar-600 font-medium" : currentStep === "customer-info" || currentStep === "review" ? "text-solar-600" : "text-gray-400"}`}>
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${currentStep === "plant-info" ? "bg-solar-600 text-white" : currentStep === "customer-info" || currentStep === "review" ? "bg-solar-100 text-solar-600 border-2 border-solar-600" : "bg-gray-100 text-gray-400"}`}>
             1
           </div>
-          <div className="text-xs mt-2">Santral Bilgileri</div>
+          <span className="text-xs">Santral Bilgileri</span>
         </div>
-        <div className="flex-1 flex items-center">
-          <div className={`step-line ${currentStep === "customer-info" || currentStep === "review" ? "complete" : ""}`}></div>
-        </div>
-        <div className="step">
-          <div className={`step-circle ${currentStep === "customer-info" ? "active" : currentStep === "review" ? "complete" : ""}`}>
+        
+        <div className={`h-1 flex-1 mx-2 ${currentStep === "customer-info" || currentStep === "review" ? "bg-solar-600" : "bg-gray-200"}`}></div>
+        
+        <div className={`flex flex-col items-center ${currentStep === "customer-info" ? "text-solar-600 font-medium" : currentStep === "review" ? "text-solar-600" : "text-gray-400"}`}>
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${currentStep === "customer-info" ? "bg-solar-600 text-white" : currentStep === "review" ? "bg-solar-100 text-solar-600 border-2 border-solar-600" : "bg-gray-100 text-gray-400"}`}>
             2
           </div>
-          <div className="text-xs mt-2">Müşteri Bilgileri</div>
+          <span className="text-xs">Müşteri Bilgileri</span>
         </div>
-        <div className="flex-1 flex items-center">
-          <div className={`step-line ${currentStep === "review" ? "complete" : ""}`}></div>
-        </div>
-        <div className="step">
-          <div className={`step-circle ${currentStep === "review" ? "active" : ""}`}>
+        
+        <div className={`h-1 flex-1 mx-2 ${currentStep === "review" ? "bg-solar-600" : "bg-gray-200"}`}></div>
+        
+        <div className={`flex flex-col items-center ${currentStep === "review" ? "text-solar-600 font-medium" : "text-gray-400"}`}>
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${currentStep === "review" ? "bg-solar-600 text-white" : "bg-gray-100 text-gray-400"}`}>
             3
           </div>
-          <div className="text-xs mt-2">Teklif Onayı</div>
+          <span className="text-xs">Teklif Onayı</span>
         </div>
       </div>
     </div>

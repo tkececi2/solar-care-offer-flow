@@ -57,12 +57,20 @@ export const QuoteFormWrapper = ({ selectedPackage }: QuoteFormWrapperProps) => 
     const currentIndex = steps.indexOf(currentStep);
 
     if (direction === "next" && currentIndex < steps.length - 1) {
-      // İleri giderken form validasyonu yapalım
-      form.trigger().then((isValid) => {
-        if (isValid) {
-          setCurrentStep(steps[currentIndex + 1]);
-        }
-      });
+      // Step-specific validation
+      if (currentStep === "plant-info") {
+        form.trigger(["plantCapacity"]).then((isValid) => {
+          if (isValid) {
+            setCurrentStep(steps[currentIndex + 1]);
+          }
+        });
+      } else if (currentStep === "customer-info") {
+        form.trigger(["customerName", "customerEmail"]).then((isValid) => {
+          if (isValid) {
+            setCurrentStep(steps[currentIndex + 1]);
+          }
+        });
+      }
     } else if (direction === "prev" && currentIndex > 0) {
       // Geri giderken validasyon gerekmez
       setCurrentStep(steps[currentIndex - 1]);
