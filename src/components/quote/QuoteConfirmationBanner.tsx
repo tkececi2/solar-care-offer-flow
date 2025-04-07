@@ -9,8 +9,11 @@ export function QuoteConfirmationBanner() {
       </div>
       <div>
         <h2 className="text-xl font-semibold text-green-800">Teklifiniz Başarıyla Oluşturuldu!</h2>
-        <p className="text-green-700">
+        <p className="text-green-700 mb-1">
           Teklifiniz ekibimize iletildi. En kısa sürede sizinle iletişime geçeceğiz.
+        </p>
+        <p className="text-sm text-green-600">
+          Bilgileriniz sistem yöneticimize otomatik olarak gönderilmiştir.
         </p>
       </div>
     </div>

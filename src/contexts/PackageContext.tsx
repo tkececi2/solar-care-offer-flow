@@ -1,5 +1,6 @@
-
 import { createContext, useContext, useState, ReactNode } from "react";
+import { sendQuoteToOwner, formatQuoteForEmail } from "@/utils/quoteNotifications";
+import { toast } from "sonner";
 
 export interface PackageFeature {
   id: string;
@@ -47,7 +48,6 @@ interface PackageContextType {
   clearQuote: () => void;
 }
 
-// Updated packages data based on the information provided
 const PACKAGES: ServicePackage[] = [
   {
     id: "annual-maintenance",
@@ -437,11 +437,9 @@ export const PackageProvider = ({ children }: { children: ReactNode }) => {
   const createQuote = (details: Partial<QuoteDetails>) => {
     if (!selectedPackage) return;
 
-    // Calculate future date for quote validity (30 days)
     const validUntil = new Date();
     validUntil.setDate(validUntil.getDate() + 30);
 
-    // Calculate total price based on plant capacity
     const totalPrice = selectedPackage.price * (details.plantCapacity || 0);
 
     const newQuote: QuoteDetails = {
@@ -461,28 +459,40 @@ export const PackageProvider = ({ children }: { children: ReactNode }) => {
 
     setQuoteDetails(newQuote);
     
-    // Store quote in localStorage
     const quoteForStorage = {
       id: `Q${new Date().getTime().toString().slice(-6)}`,
       packageName: selectedPackage.name,
       date: newQuote.quoteDate,
       status: "approved",
-      totalPrice: totalPrice * 1.2, // Including VAT
+      totalPrice: totalPrice * 1.2,
       packageId: selectedPackage.id,
       plantCapacity: details.plantCapacity || 0
     };
     
-    // Get existing quotes
     const storedQuotes = localStorage.getItem('userQuotes');
     let quotes = storedQuotes ? JSON.parse(storedQuotes) : [];
     
-    // Add the new quote
     quotes = [quoteForStorage, ...quotes];
     
-    // Store updated quotes
     localStorage.setItem('userQuotes', JSON.stringify(quotes));
     
-    // Mock API call simülasyonu - gerçekte API'ye kaydetme işlemi
+    try {
+      const formattedQuote = formatQuoteForEmail(newQuote, selectedPackage);
+      const sendResult = sendQuoteToOwner({
+        ...formattedQuote,
+        quoteData: newQuote,
+        packageData: selectedPackage
+      });
+      
+      if (sendResult.success) {
+        console.log("Quote successfully sent to site owner");
+      } else {
+        console.error("Failed to send quote notification to site owner");
+      }
+    } catch (error) {
+      console.error("Error sending quote notification:", error);
+    }
+    
     console.log("Teklif oluşturuldu:", newQuote);
   };
 
