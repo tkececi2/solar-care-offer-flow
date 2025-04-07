@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -31,7 +30,6 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
-// Icon mapping for feature icons
 const featureIconMap: Record<string, any> = {
   "droplet": Droplet,
   "scan": Scan,
@@ -72,7 +70,6 @@ export default function PackagesPage() {
     navigate("/quote");
   };
 
-  // Helper function to render feature icon
   const renderFeatureIcon = (iconName: string) => {
     const IconComponent = featureIconMap[iconName];
     return IconComponent ? <IconComponent className="h-5 w-5" /> : null;
@@ -80,13 +77,13 @@ export default function PackagesPage() {
   
   return (
     <MainLayout>
-      <div className="bg-gradient-to-r from-ocean-900 to-ocean-800 py-12">
+      <div className="bg-gradient-to-r from-ocean-900 to-ocean-800 py-8">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl font-bold mb-4 text-white">
+            <h1 className="text-3xl font-bold mb-3 text-white">
               GES Bakım ve İşletme <span className="text-solar-500">Paketleri</span>
             </h1>
-            <p className="text-xl text-white/80">
+            <p className="text-lg text-white/80">
               İhtiyaçlarınıza uygun bakım paketini seçin ve güneş santrallerinizin
               performansını maksimuma çıkarın.
             </p>
@@ -94,8 +91,8 @@ export default function PackagesPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12">
-        <div className="mb-8 flex justify-center">
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-6 flex justify-center">
           <Tabs defaultValue="cards" className="w-full max-w-md">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="cards" onClick={() => setView("cards")}>
@@ -109,71 +106,70 @@ export default function PackagesPage() {
         </div>
 
         {view === "cards" ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {packages.map((pkg) => (
               <Card 
                 key={pkg.id}
-                className={`overflow-hidden hover:shadow-lg transition-all ${
+                className={`overflow-hidden hover:shadow-md transition-all h-full ${
                   pkg.popular ? 'border-solar-500 border-2 relative' : ''
                 }`}
               >
                 {pkg.popular && (
-                  <div className="absolute top-0 right-0 bg-solar-500 text-white text-xs py-1 px-3">
+                  <div className="absolute top-0 right-0 bg-solar-500 text-white text-xs py-1 px-2">
                     Önerilen
                   </div>
                 )}
                 
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2">{pkg.name}</h3>
+                <div className="p-4">
+                  <h3 className="text-lg font-bold mb-1">{pkg.name}</h3>
                   
-                  <div className="mt-4 text-3xl font-bold text-ocean-800">
-                    {pkg.price} <span className="text-sm font-normal text-muted-foreground">TL/{pkg.priceUnit}</span>
+                  <div className="mt-2 text-xl font-bold text-ocean-800">
+                    {pkg.price} <span className="text-xs font-normal text-muted-foreground">TL/{pkg.priceUnit}</span>
                   </div>
 
                   {pkg.minCapacity && (
-                    <p className="text-xs text-muted-foreground mt-1 mb-2">
-                      {pkg.minCapacity} kWp {pkg.maxCapacity ? `- ${pkg.maxCapacity} kWp` : "ve üzeri"} için
+                    <p className="text-xs text-muted-foreground mt-1 mb-1">
+                      {pkg.minCapacity} kWp {pkg.maxCapacity ? `- ${pkg.maxCapacity} kWp` : "ve üzeri"}
                     </p>
                   )}
                   
-                  <p className="text-muted-foreground my-4">{pkg.description}</p>
+                  <p className="text-sm text-muted-foreground my-2 line-clamp-2">{pkg.description}</p>
                   
-                  <div className="space-y-3 mb-6">
-                    {pkg.features.slice(0, 5).map((feature) => (
-                      <div key={feature.id} className="flex items-start">
+                  <div className="space-y-1 mb-4">
+                    {pkg.features.slice(0, 3).map((feature) => (
+                      <div key={feature.id} className="flex items-start text-sm">
                         {feature.included ? (
-                          <CheckCircle className="text-solar-500 h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                          <CheckCircle className="text-solar-500 h-4 w-4 mr-1 mt-0.5 flex-shrink-0" />
                         ) : (
-                          <XCircle className="text-muted-foreground/50 h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                          <XCircle className="text-muted-foreground/50 h-4 w-4 mr-1 mt-0.5 flex-shrink-0" />
                         )}
-                        <span className={!feature.included ? "text-muted-foreground/70" : ""}>
+                        <span className={!feature.included ? "text-muted-foreground/70 line-clamp-1" : "line-clamp-1"}>
                           {feature.title}
-                          {feature.frequency && feature.included && (
-                            <span className="block text-xs text-muted-foreground">{feature.frequency}</span>
-                          )}
                         </span>
                       </div>
                     ))}
                     
-                    {pkg.features.length > 5 && (
-                      <div className="text-center text-sm text-muted-foreground mt-2">
-                        +{pkg.features.length - 5} daha fazla özellik
+                    {pkg.features.length > 3 && (
+                      <div className="text-xs text-muted-foreground mt-1">
+                        +{pkg.features.length - 3} daha fazla özellik
                       </div>
                     )}
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="flex gap-2 mt-auto">
                     <Button 
                       onClick={() => handleSelectPackage(pkg.id)} 
                       variant="outline"
-                      className="border-ocean-800 text-ocean-800 hover:bg-ocean-50"
+                      size="sm" 
+                      className="flex-1 text-xs"
                     >
-                      Detayları Gör
+                      Detaylar
                     </Button>
                     
                     <Button 
                       onClick={() => handleGetQuote(pkg.id)}
-                      className="bg-solar-500 hover:bg-solar-600 text-white"
+                      className="flex-1 bg-solar-500 hover:bg-solar-600 text-white text-xs"
+                      size="sm"
                     >
                       Teklif Al
                     </Button>
@@ -204,9 +200,7 @@ export default function PackagesPage() {
                 </tr>
               </thead>
               <tbody>
-                {/* Tüm özellikleri listelemek için benzersiz özellik başlıkları oluşturalım */}
                 {Array.from(new Set(packages.flatMap(pkg => pkg.features.map(f => f.title)))).map((featureTitle, index) => {
-                  // Her bir özellik için o özelliğe sahip tüm paketleri kontrol edelim
                   const feature = packages.flatMap(p => p.features).find(f => f.title === featureTitle);
                   
                   return (
@@ -244,7 +238,7 @@ export default function PackagesPage() {
                       <div className="grid grid-cols-1 gap-2">
                         <Button 
                           onClick={() => handleGetQuote(pkg.id)}
-                          className="bg-solar-500 hover:bg-solar-600 text-white"
+                          className="bg-solar-500 hover:bg-solar-600 text-white text-xs"
                           size="sm"
                         >
                           Teklif Al
@@ -267,38 +261,38 @@ export default function PackagesPage() {
           </div>
         )}
 
-        <div className="mt-16 bg-card p-8 rounded-lg shadow-sm border border-border">
-          <h2 className="text-2xl font-bold mb-4">Sık Sorulan Sorular</h2>
+        <div className="mt-12 bg-card p-6 rounded-lg shadow-sm border border-border">
+          <h2 className="text-xl font-bold mb-3">Sık Sorulan Sorular</h2>
           
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div>
-              <h3 className="font-semibold flex items-center text-lg">
-                <ChevronRight className="mr-2 h-5 w-5 text-solar-500" />
+              <h3 className="font-semibold flex items-center text-base">
+                <ChevronRight className="mr-2 h-4 w-4 text-solar-500" />
                 Bakım paketleri tüm GES türleri için uygun mudur?
               </h3>
-              <p className="mt-2 text-muted-foreground ml-7">
+              <p className="mt-1 text-sm text-muted-foreground ml-6">
                 Evet, bakım paketlerimiz çatı tipi, arazi tipi ve tüm kapasitelerdeki GES'ler için uygundur. 
                 Santralınızın özelliklerine göre hizmet kapsamı özelleştirilebilir.
               </p>
             </div>
             
             <div>
-              <h3 className="font-semibold flex items-center text-lg">
-                <ChevronRight className="mr-2 h-5 w-5 text-solar-500" />
+              <h3 className="font-semibold flex items-center text-base">
+                <ChevronRight className="mr-2 h-4 w-4 text-solar-500" />
                 Özel bakım paketleri talep edebilir miyim?
               </h3>
-              <p className="mt-2 text-muted-foreground ml-7">
+              <p className="mt-1 text-sm text-muted-foreground ml-6">
                 Kesinlikle. Güneş santralınızın ihtiyaçlarına göre özelleştirilmiş bakım paketleri sunabiliyoruz. 
                 İletişim formu üzerinden bizimle iletişime geçebilirsiniz.
               </p>
             </div>
             
             <div>
-              <h3 className="font-semibold flex items-center text-lg">
-                <ChevronRight className="mr-2 h-5 w-5 text-solar-500" />
+              <h3 className="font-semibold flex items-center text-base">
+                <ChevronRight className="mr-2 h-4 w-4 text-solar-500" />
                 Bakım anlaşması süresi ne kadardır?
               </h3>
-              <p className="mt-2 text-muted-foreground ml-7">
+              <p className="mt-1 text-sm text-muted-foreground ml-6">
                 Standart bakım anlaşmaları 1 yıllıktır, ancak 2 veya 3 yıllık anlaşmalar için 
                 indirimli fiyatlar sunmaktayız.
               </p>

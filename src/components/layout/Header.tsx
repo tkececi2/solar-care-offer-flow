@@ -20,7 +20,7 @@ export function Header() {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center">
           <Link to="/" className="text-2xl font-bold text-primary">
-            GES<span className="text-secondary">Bakım</span>
+            Solar<span className="text-secondary">Enerjin Teklif</span>
           </Link>
         </div>
 
