@@ -14,11 +14,11 @@ import {
 } from "@/components/ui/card";
 import {
   AlertCircle,
-  BarChart,
   FileText,
   User,
   Package,
   Settings,
+  ArrowRight
 } from "lucide-react";
 
 // Dashboard için mocklanmış teklif ve rapor verileri
@@ -30,54 +30,19 @@ type Quote = {
   totalPrice: number;
 };
 
-type Report = {
-  id: string;
-  title: string;
-  date: Date;
-  type: "maintenance" | "inspection" | "performance";
-};
-
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const { user, updateProfile } = useAuth();
+  const { user } = useAuth();
   const [quotes, setQuotes] = useState<Quote[]>([]);
-  const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Mock veri yükleme simülasyonu
     const loadMockData = async () => {
       await new Promise((resolve) => setTimeout(resolve, 800));
-
-      // Mock teklifler
-      const mockQuotes: Quote[] = [
-        {
-          id: "Q2023001",
-          packageName: "Basit İşletme Paketi",
-          date: new Date(2023, 10, 15),
-          status: "pending",
-          totalPrice: 7500,
-        },
-      ];
-
-      // Mock raporlar
-      const mockReports: Report[] = [
-        {
-          id: "R2023001",
-          title: "Yıllık Bakım Raporu",
-          date: new Date(2023, 9, 10),
-          type: "maintenance",
-        },
-        {
-          id: "R2023002",
-          title: "Panel Temizlik Raporu",
-          date: new Date(2023, 10, 5),
-          type: "maintenance",
-        },
-      ];
-
-      setQuotes(mockQuotes);
-      setReports(mockReports);
+      
+      // For new users, we don't load any mock quotes
+      setQuotes([]);
       setLoading(false);
     };
 
@@ -113,55 +78,35 @@ export default function DashboardPage() {
       <div className="container mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold mb-2">Merhaba, {user.name}</h1>
         <p className="text-muted-foreground mb-6">
-          GES bakım paketlerinizi ve tekliflerinizi buradan takip edebilirsiniz
+          GES bakım teklifi almak için hemen başlayın
         </p>
 
-        {/* Ana Dashboard Panelleri */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {/* Teklifler Paneli */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Aktif Teklifler</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
+        {/* Ana Dashboard - Basitleştirilmiş */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <Card className="col-span-full bg-gradient-to-r from-primary/10 to-background">
+            <CardHeader>
+              <CardTitle className="text-2xl">GES Bakım Teklifi Alın</CardTitle>
+              <CardDescription>
+                Güneş enerji sisteminiz için profesyonel bakım teklifleri alın
+              </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{quotes.filter(q => q.status === "pending").length}</div>
-              <p className="text-xs text-muted-foreground">
-                Son teklif {quotes.length > 0 ? formatDate(quotes[0].date) : "bulunmuyor"}
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Santral Kapasite Paneli */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Santral Kapasitesi</CardTitle>
-              <BarChart className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {user.plantDetails?.capacity || "Tanımlanmadı"}
-                {user.plantDetails?.capacity ? " kWp" : ""}
+            <CardContent className="space-y-4">
+              <p>Güneş enerji santrallerinizin bakımı için uygun paketi seçerek hemen teklif alabilirsiniz.</p>
+              
+              <div className="flex flex-wrap gap-4">
+                <Button 
+                  onClick={() => navigate("/packages")} 
+                  className="animate-pulse"
+                >
+                  Paketleri İncele
+                </Button>
+                <Button 
+                  onClick={() => navigate("/quote")} 
+                  variant="outline"
+                >
+                  Teklif Oluştur
+                </Button>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {user.plantDetails?.panelCount
-                  ? `${user.plantDetails?.panelCount} panel`
-                  : "Panel sayısı tanımlanmadı"}
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Raporlar Paneli */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-              <CardTitle className="text-sm font-medium">Bakım Raporları</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{reports.length}</div>
-              <p className="text-xs text-muted-foreground">
-                Son rapor {reports.length > 0 ? formatDate(reports[0].date) : "bulunmuyor"}
-              </p>
             </CardContent>
           </Card>
         </div>
@@ -212,23 +157,51 @@ export default function DashboardPage() {
               </CardFooter>
             </Card>
 
-            {/* Hızlı İşlemler */}
+            {/* Santral Bilgileri Kartı */}
             <Card>
               <CardHeader>
-                <CardTitle>Hızlı İşlemler</CardTitle>
+                <CardTitle>Santral Bilgileriniz</CardTitle>
+                <CardDescription>
+                  Daha uygun teklif almak için santral bilgilerinizi ekleyin
+                </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2">
-                <Button onClick={() => navigate("/packages")} variant="secondary" className="w-full">
-                  Paketleri İncele
-                </Button>
-                <Button onClick={() => navigate("/quote")} variant="outline" className="w-full">
-                  Yeni Teklif Al
-                </Button>
+              <CardContent className="space-y-4">
+                {!user.plantDetails?.capacity ? (
+                  <div className="text-center py-4">
+                    <p className="text-muted-foreground mb-4">Henüz santral bilgisi eklenmemiş</p>
+                    <Button 
+                      onClick={() => navigate("/profile")} 
+                      variant="outline" 
+                      size="sm"
+                    >
+                      Santral Bilgisi Ekle
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Santral Kapasitesi</p>
+                      <p className="font-medium">{user.plantDetails.capacity} kWp</p>
+                    </div>
+                    {user.plantDetails.location && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">Konum</p>
+                        <p className="font-medium">{user.plantDetails.location}</p>
+                      </div>
+                    )}
+                    {user.plantDetails.panelCount && (
+                      <div>
+                        <p className="text-sm text-muted-foreground">Panel Sayısı</p>
+                        <p className="font-medium">{user.plantDetails.panelCount}</p>
+                      </div>
+                    )}
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>
 
-          {/* Orta ve Sağ Sütun - Teklifler ve Raporlar */}
+          {/* Orta ve Sağ Sütun - Teklifler */}
           <div className="lg:col-span-2 space-y-6">
             {/* Teklifler */}
             <Card>
@@ -241,7 +214,7 @@ export default function DashboardPage() {
               <CardContent>
                 {loading ? (
                   <div className="text-center py-8">
-                    <p>Teklifler yükleniyor...</p>
+                    <p>Yükleniyor...</p>
                   </div>
                 ) : quotes.length > 0 ? (
                   <div className="overflow-x-auto">
@@ -285,72 +258,72 @@ export default function DashboardPage() {
                     </table>
                   </div>
                 ) : (
-                  <div className="text-center py-8 border border-dashed border-border rounded-lg">
-                    <p className="text-muted-foreground">Henüz teklif bulunmuyor</p>
-                    <Button 
-                      onClick={() => navigate("/packages")} 
-                      variant="outline" 
-                      className="mt-4"
-                    >
-                      Teklif Oluştur
-                    </Button>
+                  <div className="text-center py-12 border border-dashed border-border rounded-lg">
+                    <Package className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
+                    <h3 className="text-lg font-medium mb-2">Henüz teklif almadınız</h3>
+                    <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                      İhtiyacınıza uygun GES bakım paketini seçerek hemen teklifinizi alın
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-4">
+                      <Button 
+                        onClick={() => navigate("/packages")} 
+                        className="flex items-center"
+                      >
+                        <span>Paketleri İncele</span>
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            {/* Raporlar */}
+            {/* Hızlı Başlangıç Rehberi */}
             <Card>
               <CardHeader>
-                <CardTitle>Bakım Raporlarım</CardTitle>
+                <CardTitle>Hızlı Başlangıç</CardTitle>
                 <CardDescription>
-                  Santrallerinize ait bakım ve kontrol raporları
+                  Aşağıdaki adımları takip ederek teklifinizi alın
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {loading ? (
-                  <div className="text-center py-8">
-                    <p>Raporlar yükleniyor...</p>
+                <div className="space-y-4">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 bg-primary/10 rounded-full p-2 mr-4">
+                      <span className="font-bold">1</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium">Santral bilgilerinizi ekleyin</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Kapasite ve konum bilgilerinizi profilinize ekleyerek size özel teklifler alın
+                      </p>
+                    </div>
                   </div>
-                ) : reports.length > 0 ? (
-                  <div className="space-y-3">
-                    {reports.map((report) => (
-                      <div
-                        key={report.id}
-                        className="flex items-start justify-between border-b border-border pb-2 last:border-0"
-                      >
-                        <div className="flex items-start space-x-3">
-                          <div
-                            className={`p-2 rounded-full ${
-                              report.type === "maintenance"
-                                ? "bg-blue-100 text-blue-800"
-                                : report.type === "inspection"
-                                ? "bg-amber-100 text-amber-800"
-                                : "bg-green-100 text-green-800"
-                            }`}
-                          >
-                            <FileText className="h-4 w-4" />
-                          </div>
-                          <div>
-                            <p className="font-medium">{report.title}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {formatDate(report.date)}
-                            </p>
-                          </div>
-                        </div>
-                        <Button variant="ghost" size="sm">
-                          Görüntüle
-                        </Button>
-                      </div>
-                    ))}
+                  
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 bg-primary/10 rounded-full p-2 mr-4">
+                      <span className="font-bold">2</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium">Bakım paketini seçin</h4>
+                      <p className="text-sm text-muted-foreground">
+                        İhtiyacınıza uygun bakım paketini seçin ve detayları inceleyin
+                      </p>
+                    </div>
                   </div>
-                ) : (
-                  <div className="text-center py-8 border border-dashed border-border rounded-lg">
-                    <p className="text-muted-foreground">
-                      Henüz rapor bulunmuyor
-                    </p>
+                  
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 bg-primary/10 rounded-full p-2 mr-4">
+                      <span className="font-bold">3</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium">Teklif alın</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Seçtiğiniz paket için teklif oluşturun ve sonucu anında görüntüleyin
+                      </p>
+                    </div>
                   </div>
-                )}
+                </div>
               </CardContent>
             </Card>
           </div>
