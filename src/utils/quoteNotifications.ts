@@ -3,10 +3,10 @@
 import emailjs from '@emailjs/browser';
 import { toast } from 'sonner';
 
-// EmailJS servis bilgileri - Doğru bilgilerle güncellendi
+// EmailJS servis bilgileri - Kullanıcının sağladığı public key ile güncellendi
 const EMAIL_SERVICE_ID = 'service_d04w8b5';  // EmailJS Dashboard'dan alınan service ID
 const EMAIL_TEMPLATE_ID = 'template_4f9cnr1';  // EmailJS Dashboard'dan alınan template ID
-const EMAIL_PUBLIC_KEY = 'Vx2iP4szPar7xhQWi';  // EmailJS Dashboard'dan alınan public key
+const EMAIL_PUBLIC_KEY = 'Cv8cex1t4C-96UaJd';  // Kullanıcının sağladığı public key
 const SITE_OWNER_EMAIL = 'site.owner@example.com'; // Site sahibinin gerçek e-posta adresi
 
 /**
