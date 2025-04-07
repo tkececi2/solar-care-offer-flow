@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePackage } from "@/contexts/PackageContext";
@@ -9,16 +10,16 @@ import { toast } from "sonner";
 import { Check, Download, FileText, Share2 } from "lucide-react";
 
 export default function QuoteSummaryPage() {
-  const { selectedQuote, selectedPackage } = usePackage();
+  const { quoteDetails, selectedPackage } = usePackage();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!selectedQuote || !selectedPackage) {
+    if (!quoteDetails || !selectedPackage) {
       navigate("/packages");
     }
-  }, [selectedQuote, selectedPackage, navigate]);
+  }, [quoteDetails, selectedPackage, navigate]);
 
-  if (!selectedQuote || !selectedPackage) {
+  if (!quoteDetails || !selectedPackage) {
     return null;
   }
 
@@ -84,12 +85,12 @@ export default function QuoteSummaryPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Kapasite:</span>
-                      <span className="font-medium">{selectedQuote.plantCapacity} kWp</span>
+                      <span className="font-medium">{quoteDetails.plantCapacity} kWp</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Panel Sayısı:</span>
                       <span className="font-medium">
-                        {selectedQuote.panelCount || "Belirtilmedi"}
+                        {quoteDetails.panelCount || "Belirtilmedi"}
                       </span>
                     </div>
                   </div>
@@ -97,7 +98,7 @@ export default function QuoteSummaryPage() {
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Lokasyon:</span>
                       <span className="font-medium">
-                        {selectedQuote.plantLocation || "Belirtilmedi"}
+                        {quoteDetails.plantLocation || "Belirtilmedi"}
                       </span>
                     </div>
                   </div>
@@ -112,24 +113,24 @@ export default function QuoteSummaryPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Ad Soyad:</span>
-                      <span className="font-medium">{selectedQuote.customerName}</span>
+                      <span className="font-medium">{quoteDetails.customerName}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">E-posta:</span>
-                      <span className="font-medium">{selectedQuote.customerEmail}</span>
+                      <span className="font-medium">{quoteDetails.customerEmail}</span>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Telefon:</span>
                       <span className="font-medium">
-                        {selectedQuote.customerPhone || "Belirtilmedi"}
+                        {quoteDetails.customerPhone || "Belirtilmedi"}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Firma:</span>
                       <span className="font-medium">
-                        {selectedQuote.companyName || "Belirtilmedi"}
+                        {quoteDetails.companyName || "Belirtilmedi"}
                       </span>
                     </div>
                   </div>
@@ -149,37 +150,37 @@ export default function QuoteSummaryPage() {
                   </div>
                   <div className="flex justify-between mb-2">
                     <span className="text-muted-foreground">Kapasite:</span>
-                    <span className="font-medium">{selectedQuote.plantCapacity} kWp</span>
+                    <span className="font-medium">{quoteDetails.plantCapacity} kWp</span>
                   </div>
                   <div className="flex justify-between mb-2">
                     <span className="text-muted-foreground">Ara Toplam:</span>
                     <span className="font-medium">
-                      {(selectedPackage.price * selectedQuote.plantCapacity).toFixed(2)} TL
+                      {(selectedPackage.price * quoteDetails.plantCapacity).toFixed(2)} TL
                     </span>
                   </div>
                   <div className="flex justify-between mb-2">
                     <span className="text-muted-foreground">KDV (%20):</span>
                     <span className="font-medium">
-                      {(selectedPackage.price * selectedQuote.plantCapacity * 0.2).toFixed(2)} TL
+                      {(selectedPackage.price * quoteDetails.plantCapacity * 0.2).toFixed(2)} TL
                     </span>
                   </div>
                   <Separator className="my-2" />
                   <div className="flex justify-between font-bold">
                     <span>Genel Toplam:</span>
                     <span className="text-primary">
-                      {(selectedPackage.price * selectedQuote.plantCapacity * 1.2).toFixed(2)} TL
+                      {(selectedPackage.price * quoteDetails.plantCapacity * 1.2).toFixed(2)} TL
                     </span>
                   </div>
                 </div>
               </div>
 
-              {selectedQuote.additionalNotes && (
+              {quoteDetails.additionalNotes && (
                 <>
                   <Separator />
                   <div>
                     <h3 className="text-lg font-medium mb-2">Ek Notlar</h3>
                     <p className="text-muted-foreground bg-muted p-4 rounded-md">
-                      {selectedQuote.additionalNotes}
+                      {quoteDetails.additionalNotes}
                     </p>
                   </div>
                 </>
