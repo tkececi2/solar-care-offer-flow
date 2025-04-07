@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -30,6 +29,7 @@ import {
   TrendingUp,
   ChevronLeft,
 } from "lucide-react";
+import { toast } from "sonner";
 
 // Icon mapping for feature icons
 const featureIconMap: Record<string, any> = {
@@ -72,6 +72,7 @@ export default function PackageDetailPage() {
 
   const handleGetQuote = () => {
     if (!user) {
+      toast.info("Teklif almak için önce giriş yapmalısınız.");
       navigate("/login");
     } else {
       navigate("/quote");

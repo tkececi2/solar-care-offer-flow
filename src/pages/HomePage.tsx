@@ -4,16 +4,28 @@ import { Button } from "@/components/ui/button";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { CheckCircle, ArrowRight, Sun, Zap, Shield, BarChart } from "lucide-react";
 import { usePackage } from "@/contexts/PackageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function HomePage() {
   const { packages, setSelectedPackage } = usePackage();
   const navigate = useNavigate();
+  const { user } = useAuth();
   
   const handleSelectPackage = (packageId: string) => {
     setSelectedPackage(packageId);
     navigate(`/package-detail/${packageId}`);
+  };
+  
+  const handleGetQuote = (packageId: string) => {
+    setSelectedPackage(packageId);
+    
+    if (!user) {
+      navigate("/login");
+    } else {
+      navigate("/quote");
+    }
   };
 
   return (
@@ -123,10 +135,7 @@ export default function HomePage() {
                     </Button>
                     
                     <Button 
-                      onClick={() => {
-                        setSelectedPackage(pkg.id);
-                        navigate("/quote");
-                      }} 
+                      onClick={() => handleGetQuote(pkg.id)} 
                       size="sm"
                       className="flex-1 bg-solar-500 hover:bg-solar-600 text-white text-xs"
                     >
@@ -215,7 +224,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Button 
-              onClick={() => navigate("/quote")} 
+              onClick={() => user ? navigate("/quote") : navigate("/login")} 
               size="lg"
               className="bg-solar-500 hover:bg-solar-600 text-white"
             >
