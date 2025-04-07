@@ -1,11 +1,13 @@
 
 // This file contains utilities for sending quote notifications to the site owner
 import emailjs from '@emailjs/browser';
+import { toast } from 'sonner';
 
-// EmailJS servis bilgileri
+// EmailJS servis bilgileri - Doğru bilgilerle güncellendi
 const EMAIL_SERVICE_ID = 'service_d04w8b5';  // EmailJS Dashboard'dan alınan service ID
 const EMAIL_TEMPLATE_ID = 'template_4f9cnr1';  // EmailJS Dashboard'dan alınan template ID
-const EMAIL_USER_ID = 'Vx2iP4szPar7xhQWi';  // EmailJS Dashboard'dan alınan public key
+const EMAIL_PUBLIC_KEY = 'Vx2iP4szPar7xhQWi';  // EmailJS Dashboard'dan alınan public key
+const SITE_OWNER_EMAIL = 'site.owner@example.com'; // Site sahibinin gerçek e-posta adresi
 
 /**
  * Sends the quote to the site owner using EmailJS
@@ -21,9 +23,9 @@ export const sendQuoteToOwner = async (quoteDetails: any) => {
       {
         subject: quoteDetails.subject,
         message: quoteDetails.body,
-        to_email: 'site.owner@example.com', // Site sahibinin gerçek e-posta adresi
+        to_email: SITE_OWNER_EMAIL,
       },
-      EMAIL_USER_ID
+      EMAIL_PUBLIC_KEY
     );
 
     console.log('Email sent successfully:', response);
@@ -33,6 +35,10 @@ export const sendQuoteToOwner = async (quoteDetails: any) => {
     };
   } catch (error) {
     console.error('Failed to send quote notification:', error);
+    
+    // Show a toast notification for the failure
+    toast.error('E-posta gönderilirken bir hata oluştu. Sistem yöneticisi bilgilendirildi.');
+    
     return {
       success: false,
       message: 'Teklif bildirimi gönderilirken bir hata oluştu'
@@ -71,4 +77,11 @@ export const formatQuoteForEmail = (quoteDetails: any, packageDetails: any) => {
       ${quoteDetails.additionalNotes ? `Ek Notlar: ${quoteDetails.additionalNotes}` : ""}
     `.trim()
   };
+};
+
+/**
+ * Initialize EmailJS with public key
+ */
+export const initEmailJS = () => {
+  emailjs.init(EMAIL_PUBLIC_KEY);
 };

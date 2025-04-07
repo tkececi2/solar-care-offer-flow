@@ -1,6 +1,5 @@
-
-import { createContext, useContext, useState, ReactNode } from "react";
-import { sendQuoteToOwner, formatQuoteForEmail } from "@/utils/quoteNotifications";
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { sendQuoteToOwner, formatQuoteForEmail, initEmailJS } from "@/utils/quoteNotifications";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -438,6 +437,15 @@ export const PackageProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  useEffect(() => {
+    try {
+      initEmailJS();
+      console.log("EmailJS initialized successfully");
+    } catch (error) {
+      console.error("Failed to initialize EmailJS:", error);
+    }
+  }, []);
+
   const createQuote = (details: Partial<QuoteDetails>) => {
     if (!selectedPackage || !user) return;
 
@@ -459,7 +467,7 @@ export const PackageProvider = ({ children }: { children: ReactNode }) => {
       totalPrice: totalPrice,
       quoteDate: new Date(),
       validUntil: validUntil,
-      userId: user.id // Add user ID to associate quote with this user
+      userId: user.id
     };
 
     setQuoteDetails(newQuote);
@@ -472,7 +480,7 @@ export const PackageProvider = ({ children }: { children: ReactNode }) => {
       totalPrice: totalPrice * 1.2,
       packageId: selectedPackage.id,
       plantCapacity: details.plantCapacity || 0,
-      userId: user.id // Add user ID to the stored quote
+      userId: user.id
     };
     
     const storedQuotes = localStorage.getItem('userQuotes');
@@ -487,7 +495,7 @@ export const PackageProvider = ({ children }: { children: ReactNode }) => {
       // Format the quote data for email
       const formattedQuote = formatQuoteForEmail(newQuote, selectedPackage);
       
-      // Send the quote notification (now properly handling the Promise)
+      // Send the quote notification
       sendQuoteToOwner({
         ...formattedQuote,
         quoteData: newQuote,
@@ -497,12 +505,15 @@ export const PackageProvider = ({ children }: { children: ReactNode }) => {
           console.log("Quote successfully sent to site owner");
         } else {
           console.error("Failed to send quote notification to site owner");
+          toast.error("Teklifiniz kaydedildi ancak e-posta bildirimi gönderilemedi.");
         }
       }).catch(error => {
         console.error("Error sending quote notification:", error);
+        toast.error("Teklifiniz kaydedildi ancak e-posta bildirimi gönderilemedi.");
       });
     } catch (error) {
       console.error("Error sending quote notification:", error);
+      toast.error("Teklifiniz kaydedildi ancak e-posta bildirimi gönderilemedi.");
     }
     
     console.log("Teklif oluşturuldu:", newQuote);
