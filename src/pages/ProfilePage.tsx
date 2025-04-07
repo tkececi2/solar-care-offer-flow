@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 

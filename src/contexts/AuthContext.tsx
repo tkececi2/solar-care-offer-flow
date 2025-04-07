@@ -1,6 +1,5 @@
-
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 
 interface User {
   id: string;
@@ -39,7 +38,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Mock API'den kullanıcı bilgilerini alma simülasyonu
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
@@ -47,22 +45,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(false);
   }, []);
 
-  // Auth işlemleri
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // Burada mock login simülasyonu
       if (email && password) {
-        // Simüle edilmiş gecikme
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        
-        // Test verileri için mocklanmış kullanıcı oluşturma
         const mockUser: User = {
           id: "1",
           email: email,
           name: email.split("@")[0],
         };
-        
         setUser(mockUser);
         localStorage.setItem("user", JSON.stringify(mockUser));
         toast.success("Giriş başarılı");
@@ -80,18 +72,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const register = async (email: string, password: string, name: string) => {
     setLoading(true);
     try {
-      // Burada mock register simülasyonu
       if (email && password && name) {
-        // Simüle edilmiş gecikme
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        
-        // Test verileri için mocklanmış kullanıcı oluşturma
         const mockUser: User = {
           id: Date.now().toString(),
           email: email,
           name: name,
         };
-        
         setUser(mockUser);
         localStorage.setItem("user", JSON.stringify(mockUser));
         toast.success("Kayıt başarılı");
