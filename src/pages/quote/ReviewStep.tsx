@@ -129,7 +129,11 @@ export const ReviewStep = ({ form, selectedPackage, onPrevStep, onSubmit }: Revi
           <ChevronLeft className="mr-2 h-4 w-4" />
           Geri
         </Button>
-        <Button type="button" onClick={onSubmit}>
+        <Button 
+          type="button"
+          onClick={onSubmit}
+          className="bg-orange-600 hover:bg-orange-700 text-white"
+        >
           Teklifi Onayla
         </Button>
       </div>

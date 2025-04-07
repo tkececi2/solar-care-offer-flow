@@ -120,7 +120,7 @@ export const CustomerInfoStep = ({ form, onPrevStep, onNextStep }: CustomerInfoS
         <Button 
           type="button" 
           onClick={handleContinue}
-          className="bg-solar-600 hover:bg-solar-700 text-white"
+          className="bg-orange-600 hover:bg-orange-700 text-white"
         >
           Devam Et
           <ChevronRight className="ml-2 h-4 w-4" />

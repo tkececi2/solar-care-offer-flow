@@ -77,15 +77,18 @@ export const QuoteFormWrapper = ({ selectedPackage }: QuoteFormWrapperProps) => 
     }
   };
 
-  const onSubmit = (data: FormValues) => {
-    if (currentStep !== "review") {
-      handleStepChange("next");
-      return;
+  const handleSubmit = async (data: FormValues) => {
+    try {
+      createQuote({
+        ...data,
+        packageId: selectedPackage.id,
+      });
+      toast.success("Teklifiniz başarıyla oluşturuldu!");
+      navigate("/quote-summary");
+    } catch (error) {
+      toast.error("Teklif oluşturulurken bir hata oluştu. Lütfen tekrar deneyiniz.");
+      console.error("Teklif oluşturma hatası:", error);
     }
-
-    createQuote(data);
-    toast.success("Teklifiniz başarıyla oluşturuldu!");
-    navigate("/quote-summary");
   };
 
   return (
@@ -93,7 +96,7 @@ export const QuoteFormWrapper = ({ selectedPackage }: QuoteFormWrapperProps) => 
       <StepIndicator currentStep={currentStep} />
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
           {currentStep === "plant-info" && (
             <PlantInfoStep 
               form={form} 
@@ -115,7 +118,7 @@ export const QuoteFormWrapper = ({ selectedPackage }: QuoteFormWrapperProps) => 
               form={form} 
               selectedPackage={selectedPackage}
               onPrevStep={() => handleStepChange("prev")}
-              onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={form.handleSubmit(handleSubmit)}
             />
           )}
         </form>
