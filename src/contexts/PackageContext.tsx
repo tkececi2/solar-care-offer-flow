@@ -460,6 +460,28 @@ export const PackageProvider = ({ children }: { children: ReactNode }) => {
     };
 
     setQuoteDetails(newQuote);
+    
+    // Store quote in localStorage
+    const quoteForStorage = {
+      id: `Q${new Date().getTime().toString().slice(-6)}`,
+      packageName: selectedPackage.name,
+      date: newQuote.quoteDate,
+      status: "approved",
+      totalPrice: totalPrice * 1.2, // Including VAT
+      packageId: selectedPackage.id,
+      plantCapacity: details.plantCapacity || 0
+    };
+    
+    // Get existing quotes
+    const storedQuotes = localStorage.getItem('userQuotes');
+    let quotes = storedQuotes ? JSON.parse(storedQuotes) : [];
+    
+    // Add the new quote
+    quotes = [quoteForStorage, ...quotes];
+    
+    // Store updated quotes
+    localStorage.setItem('userQuotes', JSON.stringify(quotes));
+    
     // Mock API call simülasyonu - gerçekte API'ye kaydetme işlemi
     console.log("Teklif oluşturuldu:", newQuote);
   };

@@ -1,9 +1,9 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
+import { usePackage } from "@/contexts/PackageContext";
 import {
   Card,
   CardContent,
@@ -18,45 +18,58 @@ import {
   User,
   Package,
   Settings,
-  ArrowRight
+  ArrowRight,
+  Calendar,
+  CheckCircle2,
+  Clock
 } from "lucide-react";
-
-// Dashboard için mocklanmış teklif ve rapor verileri
-type Quote = {
-  id: string;
-  packageName: string;
-  date: Date;
-  status: "pending" | "approved" | "expired";
-  totalPrice: number;
-};
+import { formatDate } from "@/lib/utils";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [quotes, setQuotes] = useState<Quote[]>([]);
+  const { quoteDetails, selectedPackage, packages } = usePackage();
+  const [quotes, setQuotes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Mock veri yükleme simülasyonu
-    const loadMockData = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 800));
+    // If we have a recent quote, add it to the list
+    const loadQuotes = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 300));
       
-      // For new users, we don't load any mock quotes
-      setQuotes([]);
+      // Create a list of quotes including the current one if it exists
+      let quotesList = [];
+      
+      if (quoteDetails && selectedPackage) {
+        const newQuote = {
+          id: `Q${new Date().getTime().toString().slice(-6)}`,
+          packageName: selectedPackage.name,
+          date: quoteDetails.quoteDate,
+          status: "approved",
+          totalPrice: quoteDetails.totalPrice * 1.2, // Adding VAT
+          packageId: selectedPackage.id,
+          plantCapacity: quoteDetails.plantCapacity
+        };
+        quotesList.push(newQuote);
+      }
+      
+      // Get quotes from localStorage if any
+      const storedQuotes = localStorage.getItem('userQuotes');
+      if (storedQuotes) {
+        quotesList = [...quotesList, ...JSON.parse(storedQuotes)];
+      }
+      
+      // Store updated quotes in localStorage
+      if (quoteDetails && selectedPackage) {
+        localStorage.setItem('userQuotes', JSON.stringify(quotesList));
+      }
+      
+      setQuotes(quotesList);
       setLoading(false);
     };
 
-    loadMockData();
-  }, []);
-
-  // Tarih formatlamak için yardımcı fonksiyon
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("tr-TR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
+    loadQuotes();
+  }, [quoteDetails, selectedPackage, packages]);
 
   if (!user) {
     return (
@@ -83,7 +96,7 @@ export default function DashboardPage() {
 
         {/* Ana Dashboard - Basitleştirilmiş */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <Card className="col-span-full bg-gradient-to-r from-primary/10 to-background">
+          <Card className="col-span-full bg-gradient-to-r from-orange-50 to-background">
             <CardHeader>
               <CardTitle className="text-2xl">GES Bakım Teklifi Alın</CardTitle>
               <CardDescription>
@@ -96,7 +109,7 @@ export default function DashboardPage() {
               <div className="flex flex-wrap gap-4">
                 <Button 
                   onClick={() => navigate("/packages")} 
-                  className="animate-pulse"
+                  className="animate-pulse bg-orange-600 hover:bg-orange-700 text-white"
                 >
                   Paketleri İncele
                 </Button>
@@ -205,11 +218,23 @@ export default function DashboardPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Teklifler */}
             <Card>
-              <CardHeader>
-                <CardTitle>Tekliflerim</CardTitle>
-                <CardDescription>
-                  Oluşturduğunuz tekliflerin durumunu takip edin
-                </CardDescription>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Tekliflerim</CardTitle>
+                  <CardDescription>
+                    Oluşturduğunuz tekliflerin durumunu takip edin
+                  </CardDescription>
+                </div>
+                {quotes.length > 0 && (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="text-xs"
+                    onClick={() => navigate("/quote")}
+                  >
+                    Yeni Teklif Oluştur
+                  </Button>
+                )}
               </CardHeader>
               <CardContent>
                 {loading ? (
@@ -226,34 +251,69 @@ export default function DashboardPage() {
                           <th className="text-left py-3 px-2">Tarih</th>
                           <th className="text-left py-3 px-2">Tutar</th>
                           <th className="text-left py-3 px-2">Durum</th>
+                          <th className="text-left py-3 px-2">İşlem</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {quotes.map((quote) => (
-                          <tr key={quote.id}>
-                            <td className="py-2 px-2">{quote.id}</td>
-                            <td className="py-2 px-2">{quote.packageName}</td>
-                            <td className="py-2 px-2">{formatDate(quote.date)}</td>
-                            <td className="py-2 px-2">{quote.totalPrice.toFixed(2)} TL</td>
-                            <td className="py-2 px-2">
-                              <span
-                                className={`inline-block px-2 py-1 text-xs rounded-full ${
-                                  quote.status === "approved"
-                                    ? "bg-green-100 text-green-800"
+                        {quotes.map((quote, index) => {
+                          const quotePackage = packages.find(p => p.id === quote.packageId);
+                          return (
+                            <tr key={index} className="hover:bg-muted/50">
+                              <td className="py-2 px-2">{quote.id}</td>
+                              <td className="py-2 px-2">{quote.packageName}</td>
+                              <td className="py-2 px-2">
+                                <div className="flex items-center gap-1">
+                                  <Calendar className="h-3 w-3" />
+                                  <span>{formatDate(new Date(quote.date))}</span>
+                                </div>
+                              </td>
+                              <td className="py-2 px-2">{quote.totalPrice?.toFixed(2)} TL</td>
+                              <td className="py-2 px-2">
+                                <span
+                                  className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full ${
+                                    quote.status === "approved"
+                                      ? "bg-green-100 text-green-800"
+                                      : quote.status === "expired"
+                                      ? "bg-red-100 text-red-800"
+                                      : "bg-yellow-100 text-yellow-800"
+                                  }`}
+                                >
+                                  {quote.status === "approved"
+                                    ? (
+                                      <>
+                                        <CheckCircle2 className="h-3 w-3" />
+                                        <span>Onaylandı</span>
+                                      </>
+                                    )
                                     : quote.status === "expired"
-                                    ? "bg-red-100 text-red-800"
-                                    : "bg-yellow-100 text-yellow-800"
-                                }`}
-                              >
-                                {quote.status === "approved"
-                                  ? "Onaylandı"
-                                  : quote.status === "expired"
-                                  ? "Süresi Doldu"
-                                  : "Beklemede"}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
+                                    ? (
+                                      <>
+                                        <Clock className="h-3 w-3" />
+                                        <span>Süresi Doldu</span>
+                                      </>
+                                    )
+                                    : (
+                                      <>
+                                        <Clock className="h-3 w-3" />
+                                        <span>Beklemede</span>
+                                      </>
+                                    )}
+                                </span>
+                              </td>
+                              <td className="py-2 px-2">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="h-8 w-8 p-0"
+                                  onClick={() => navigate("/quote-summary")}
+                                >
+                                  <FileText className="h-4 w-4" />
+                                  <span className="sr-only">Detay</span>
+                                </Button>
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
@@ -267,7 +327,7 @@ export default function DashboardPage() {
                     <div className="flex flex-wrap justify-center gap-4">
                       <Button 
                         onClick={() => navigate("/packages")} 
-                        className="flex items-center"
+                        className="flex items-center bg-orange-600 hover:bg-orange-700 text-white"
                       >
                         <span>Paketleri İncele</span>
                         <ArrowRight className="ml-2 h-4 w-4" />
@@ -289,7 +349,7 @@ export default function DashboardPage() {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 bg-primary/10 rounded-full p-2 mr-4">
+                    <div className="flex-shrink-0 bg-orange-100 text-orange-600 rounded-full p-2 mr-4">
                       <span className="font-bold">1</span>
                     </div>
                     <div>
@@ -301,7 +361,7 @@ export default function DashboardPage() {
                   </div>
                   
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 bg-primary/10 rounded-full p-2 mr-4">
+                    <div className="flex-shrink-0 bg-orange-100 text-orange-600 rounded-full p-2 mr-4">
                       <span className="font-bold">2</span>
                     </div>
                     <div>
@@ -313,7 +373,7 @@ export default function DashboardPage() {
                   </div>
                   
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 bg-primary/10 rounded-full p-2 mr-4">
+                    <div className="flex-shrink-0 bg-orange-100 text-orange-600 rounded-full p-2 mr-4">
                       <span className="font-bold">3</span>
                     </div>
                     <div>
