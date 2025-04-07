@@ -1,9 +1,10 @@
+
 // This file contains utilities for sending quote notifications to the site owner
 import emailjs from '@emailjs/browser';
 
 // EmailJS servis bilgileri
-const EMAIL_SERVICE_ID = 'service_2pq49b8';  // EmailJS Dashboard'dan alınan service ID
-const EMAIL_TEMPLATE_ID = 'template_u2ifjvk';  // EmailJS Dashboard'dan alınan template ID
+const EMAIL_SERVICE_ID = 'service_d04w8b5';  // EmailJS Dashboard'dan alınan service ID
+const EMAIL_TEMPLATE_ID = 'template_4f9cnr1';  // EmailJS Dashboard'dan alınan template ID
 const EMAIL_USER_ID = 'Vx2iP4szPar7xhQWi';  // EmailJS Dashboard'dan alınan public key
 
 /**
