@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Check, Download, FileText, Share2 } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 
 export default function QuoteSummaryPage() {
   const { quoteDetails, selectedPackage } = usePackage();
@@ -70,7 +71,11 @@ export default function QuoteSummaryPage() {
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Hizmetler:</span>
                     <span className="font-medium text-right">
-                      {selectedPackage.features.slice(0, 3).join(", ")}
+                      {selectedPackage.features
+                        .filter(feature => feature.included)
+                        .slice(0, 3)
+                        .map(feature => feature.title)
+                        .join(", ")}
                       {selectedPackage.features.length > 3 && "..."}
                     </span>
                   </div>
