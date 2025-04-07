@@ -19,6 +19,8 @@ export interface ServicePackage {
   popular: boolean;
   features: PackageFeature[];
   images: string[];
+  minCapacity?: number;
+  maxCapacity?: number;
 }
 
 export interface QuoteDetails {
@@ -45,196 +47,361 @@ interface PackageContextType {
   clearQuote: () => void;
 }
 
-// Mock veri
+// Updated packages data based on the information provided
 const PACKAGES: ServicePackage[] = [
   {
-    id: "basic",
+    id: "annual-maintenance",
     name: "Yıllık Bakım Paketi",
-    description: "Santralinizin yıllık periyodik bakım ve kontrolleri için temel paket",
-    price: 15,
+    description: "Yılda bir kez kapsamlı test ve kontroller içeren temel bakım paketi",
+    price: 38,
     priceUnit: "kWp/Yıl",
     popular: false,
     features: [
       { 
         id: "f1", 
-        title: "Panel Temizliği", 
-        description: "Yılda 1 kez panel yüzeylerinin özel solüsyonla temizlenmesi", 
-        icon: "droplet", 
+        title: "İzolasyon Testi", 
+        description: "Santralin elektriksel bağlantılarının izolasyon kalitesi testi", 
+        icon: "zap", 
         included: true,
         frequency: "Yılda 1 kez" 
       },
       { 
         id: "f2", 
-        title: "Termal Kamera Taraması", 
-        description: "Panellerin termal kamera ile sıcak nokta (hot-spot) taraması", 
+        title: "Termal Testler (Panel/Pano/OG)", 
+        description: "Termal kamera ile sıcak nokta (hot-spot) taraması", 
         icon: "scan", 
         included: true,
         frequency: "Yılda 1 kez" 
       },
       { 
         id: "f3", 
-        title: "İzolasyon Testi", 
-        description: "DC kablolama ve bileşenlerin izolasyon direnci testi", 
-        icon: "zap", 
+        title: "Topraklama Testleri", 
+        description: "Santral topraklama sisteminin etkinliğinin kontrolü", 
+        icon: "activity", 
         included: true,
         frequency: "Yılda 1 kez" 
       },
       { 
         id: "f4", 
-        title: "Acil Müdahale Desteği", 
-        description: "Arıza durumunda öncelikli saha desteği", 
-        icon: "shield-alert", 
-        included: false 
+        title: "Akım-Gerilim (I-V) Ölçümleri", 
+        description: "Panel performansını değerlendirmek için akım-gerilim ölçümleri", 
+        icon: "bar-chart", 
+        included: true,
+        frequency: "Yılda 1 kez" 
       },
       { 
         id: "f5", 
-        title: "Üretim Raporlaması", 
-        description: "Aylık detaylı üretim raporları ve karşılaştırmalı analizler", 
-        icon: "bar-chart", 
-        included: false 
+        title: "Tork Testleri (%10)", 
+        description: "Mekanik bağlantıların sıkılık kontrolü", 
+        icon: "wrench", 
+        included: true,
+        frequency: "Yılda 1 kez" 
+      },
+      { 
+        id: "f6", 
+        title: "Drone ile Panel Termal Testleri", 
+        description: "Geniş alanlı panellerin termal analizi için drone ile tarama", 
+        icon: "send", 
+        included: true,
+        frequency: "Yılda 1 kez" 
+      },
+      { 
+        id: "f7", 
+        title: "OG & Röle Fonksiyon Testleri", 
+        description: "Orta gerilim ekipmanları ve röle fonksiyonlarının kontrolü", 
+        icon: "shield", 
+        included: true,
+        frequency: "Yılda 2 kez" 
       }
     ],
     images: [
-      "/placeholder.svg",
+      "/lovable-uploads/7fd0f0c7-8235-4a7c-a3fe-6a888525fb9b.png",
       "/placeholder.svg"
     ]
   },
   {
-    id: "standard",
-    name: "Basit İşletme Paketi",
-    description: "Temel izleme ve bakım hizmetlerini içeren standart işletme paketi",
-    price: 25,
+    id: "simple-operation",
+    name: "Basit İşletme Bakım Paketi",
+    description: "Temel izleme ve raporlama hizmetleri içeren ekonomik paket",
+    price: 18,
     priceUnit: "kWp/Yıl",
     popular: true,
+    minCapacity: 1000,
+    maxCapacity: 3000,
     features: [
       { 
         id: "f1", 
-        title: "Panel Temizliği", 
-        description: "Yılda 2 kez panel yüzeylerinin özel solüsyonla temizlenmesi", 
-        icon: "droplet", 
+        title: "SCADA üzerinden üretim izleme", 
+        description: "Santral üretiminin uzaktan takibi ve izlenmesi", 
+        icon: "activity", 
         included: true,
-        frequency: "Yılda 2 kez" 
+        frequency: "Sürekli" 
       },
       { 
         id: "f2", 
-        title: "Termal Kamera Taraması", 
-        description: "Panellerin termal kamera ile sıcak nokta (hot-spot) taraması", 
-        icon: "scan", 
+        title: "Günlük üretim raporu", 
+        description: "Günlük üretim verilerinin raporlanması", 
+        icon: "file-text", 
         included: true,
-        frequency: "Yılda 2 kez" 
+        frequency: "Günlük" 
       },
       { 
         id: "f3", 
-        title: "İzolasyon Testi", 
-        description: "DC kablolama ve bileşenlerin izolasyon direnci testi", 
-        icon: "zap", 
+        title: "Mahsuplaşma desteği", 
+        description: "Elektrik mahsuplaşma süreçlerinde destek ve danışmanlık", 
+        icon: "calculator", 
         included: true,
-        frequency: "Yılda 2 kez" 
+        frequency: "Aylık" 
       },
       { 
         id: "f4", 
-        title: "Acil Müdahale Desteği", 
-        description: "Arıza durumunda öncelikli saha desteği (48 saat)", 
-        icon: "shield-alert", 
+        title: "Arıza bildirimleri", 
+        description: "Arıza durumunda hızlı bildirim ve müdahale", 
+        icon: "alert-triangle", 
         included: true,
         frequency: "Gerektiğinde" 
       },
       { 
         id: "f5", 
-        title: "Üretim Raporlaması", 
-        description: "Aylık detaylı üretim raporları ve karşılaştırmalı analizler", 
-        icon: "bar-chart", 
+        title: "Performans kaybı tespiti", 
+        description: "Santral performansındaki düşüşlerin analizi ve tespiti", 
+        icon: "trending-down", 
         included: true,
         frequency: "Aylık" 
       },
       { 
         id: "f6", 
-        title: "7/24 İzleme", 
-        description: "Santralinizin 7/24 uzaktan izlenmesi ve alarm yönetimi", 
-        icon: "activity", 
-        included: false 
+        title: "Yıllık genel raporlama", 
+        description: "Santral performansının yıllık değerlendirilmesi", 
+        icon: "file-bar-chart", 
+        included: true,
+        frequency: "Yıllık" 
+      },
+      { 
+        id: "f7", 
+        title: "Yıllık Genel Testler", 
+        description: "Temel kontroller ve santral durum değerlendirmesi", 
+        icon: "check-circle", 
+        included: true,
+        frequency: "Yıllık" 
       }
     ],
     images: [
-      "/placeholder.svg",
+      "/lovable-uploads/7fd0f0c7-8235-4a7c-a3fe-6a888525fb9b.png",
       "/placeholder.svg"
     ]
   },
   {
-    id: "premium",
-    name: "Premium İşletme Paketi",
-    description: "Tam kapsamlı 7/24 izleme ve önleyici bakım hizmetleri",
-    price: 40,
+    id: "simple-operation-large",
+    name: "Basit İşletme Bakım Paketi (3000 kWp üzeri)",
+    description: "Büyük santraller için temel izleme ve raporlama hizmetleri",
+    price: 15,
     priceUnit: "kWp/Yıl",
     popular: false,
+    minCapacity: 3000,
     features: [
       { 
         id: "f1", 
-        title: "Panel Temizliği", 
-        description: "Yılda 4 kez panel yüzeylerinin özel solüsyonla temizlenmesi", 
-        icon: "droplet", 
+        title: "SCADA üzerinden üretim izleme", 
+        description: "Santral üretiminin uzaktan takibi ve izlenmesi", 
+        icon: "activity", 
         included: true,
-        frequency: "Yılda 4 kez" 
+        frequency: "Sürekli" 
       },
       { 
         id: "f2", 
-        title: "Termal Kamera Taraması", 
-        description: "Panellerin termal kamera ile sıcak nokta (hot-spot) taraması", 
-        icon: "scan", 
+        title: "Günlük üretim raporu", 
+        description: "Günlük üretim verilerinin raporlanması", 
+        icon: "file-text", 
         included: true,
-        frequency: "Yılda 4 kez" 
+        frequency: "Günlük" 
       },
       { 
         id: "f3", 
-        title: "İzolasyon Testi", 
-        description: "DC kablolama ve bileşenlerin izolasyon direnci testi", 
-        icon: "zap", 
+        title: "Mahsuplaşma desteği", 
+        description: "Elektrik mahsuplaşma süreçlerinde destek ve danışmanlık", 
+        icon: "calculator", 
         included: true,
-        frequency: "Yılda 4 kez" 
+        frequency: "Aylık" 
       },
       { 
         id: "f4", 
-        title: "Acil Müdahale Desteği", 
-        description: "Arıza durumunda öncelikli saha desteği (24 saat)", 
-        icon: "shield-alert", 
+        title: "Arıza bildirimleri", 
+        description: "Arıza durumunda hızlı bildirim ve müdahale", 
+        icon: "alert-triangle", 
         included: true,
         frequency: "Gerektiğinde" 
       },
       { 
         id: "f5", 
-        title: "Üretim Raporlaması", 
-        description: "Haftalık detaylı üretim raporları ve karşılaştırmalı analizler", 
-        icon: "bar-chart", 
+        title: "Performans kaybı tespiti", 
+        description: "Santral performansındaki düşüşlerin analizi ve tespiti", 
+        icon: "trending-down", 
         included: true,
-        frequency: "Haftalık" 
+        frequency: "Aylık" 
       },
       { 
         id: "f6", 
-        title: "7/24 İzleme", 
-        description: "Santralinizin 7/24 uzaktan izlenmesi ve alarm yönetimi", 
-        icon: "activity", 
+        title: "Yıllık genel raporlama", 
+        description: "Santral performansının yıllık değerlendirilmesi", 
+        icon: "file-bar-chart", 
+        included: true,
+        frequency: "Yıllık" 
+      },
+      { 
+        id: "f7", 
+        title: "Yıllık Genel Testler", 
+        description: "Temel kontroller ve santral durum değerlendirmesi", 
+        icon: "check-circle", 
+        included: true,
+        frequency: "Yıllık" 
+      }
+    ],
+    images: [
+      "/lovable-uploads/7fd0f0c7-8235-4a7c-a3fe-6a888525fb9b.png",
+      "/placeholder.svg"
+    ]
+  },
+  {
+    id: "premium-operation",
+    name: "Premium İşletme Bakım Paketi",
+    description: "Tam kapsamlı 7/24 izleme ve önleyici bakım hizmetleri",
+    price: 25,
+    priceUnit: "kWp/Yıl",
+    popular: false,
+    minCapacity: 1000,
+    maxCapacity: 3000,
+    features: [
+      { 
+        id: "f1", 
+        title: "Basit Paket'teki tüm özellikler", 
+        description: "Basit İşletme Bakım Paketi'ndeki tüm izleme ve raporlama özellikleri", 
+        icon: "check", 
         included: true,
         frequency: "Sürekli" 
       },
       { 
-        id: "f7", 
-        title: "Drone ile Detaylı İnceleme", 
-        description: "Drone ile santral genelinde termal ve görsel inceleme", 
-        icon: "send", 
+        id: "f2", 
+        title: "Yıllık kapsamlı testler", 
+        description: "Yıllık Bakım Paketi kapsamındaki tüm testler", 
+        icon: "clipboard-check", 
         included: true,
-        frequency: "Yılda 2 kez" 
+        frequency: "Yıllık" 
       },
       { 
-        id: "f8", 
-        title: "Performans Optimizasyonu", 
-        description: "Sürekli performans takibi ve optimizasyon önerileri", 
-        icon: "trending-up", 
+        id: "f3", 
+        title: "Aylık termal kontroller", 
+        description: "Termal kamera ile aylık sıcak nokta taraması", 
+        icon: "thermometer", 
+        included: true,
+        frequency: "Aylık" 
+      },
+      { 
+        id: "f4", 
+        title: "Aylık detaylı raporlama", 
+        description: "Santral performansı ve durumu hakkında detaylı aylık raporlar", 
+        icon: "file-text", 
+        included: true,
+        frequency: "Aylık" 
+      },
+      { 
+        id: "f5", 
+        title: "7/24 teknik destek", 
+        description: "Gün boyu kesintisiz teknik destek hizmeti", 
+        icon: "phone", 
+        included: true,
+        frequency: "Sürekli" 
+      },
+      { 
+        id: "f6", 
+        title: "48 saat içinde müdahale garantisi", 
+        description: "Arıza durumunda hızlı yerinde müdahale garantisi", 
+        icon: "clock", 
+        included: true,
+        frequency: "Gerektiğinde" 
+      },
+      { 
+        id: "f7", 
+        title: "Öncelikli destek", 
+        description: "Tüm hizmet taleplerinizde öncelikli işlem", 
+        icon: "award", 
         included: true,
         frequency: "Sürekli" 
       }
     ],
     images: [
-      "/placeholder.svg",
+      "/lovable-uploads/7fd0f0c7-8235-4a7c-a3fe-6a888525fb9b.png",
+      "/placeholder.svg"
+    ]
+  },
+  {
+    id: "premium-operation-large",
+    name: "Premium İşletme Bakım Paketi (3000 kWp üzeri)",
+    description: "Büyük santraller için tam kapsamlı bakım ve izleme hizmetleri",
+    price: 23,
+    priceUnit: "kWp/Yıl",
+    popular: false,
+    minCapacity: 3000,
+    features: [
+      { 
+        id: "f1", 
+        title: "Basit Paket'teki tüm özellikler", 
+        description: "Basit İşletme Bakım Paketi'ndeki tüm izleme ve raporlama özellikleri", 
+        icon: "check", 
+        included: true,
+        frequency: "Sürekli" 
+      },
+      { 
+        id: "f2", 
+        title: "Yıllık kapsamlı testler", 
+        description: "Yıllık Bakım Paketi kapsamındaki tüm testler", 
+        icon: "clipboard-check", 
+        included: true,
+        frequency: "Yıllık" 
+      },
+      { 
+        id: "f3", 
+        title: "Aylık termal kontroller", 
+        description: "Termal kamera ile aylık sıcak nokta taraması", 
+        icon: "thermometer", 
+        included: true,
+        frequency: "Aylık" 
+      },
+      { 
+        id: "f4", 
+        title: "Aylık detaylı raporlama", 
+        description: "Santral performansı ve durumu hakkında detaylı aylık raporlar", 
+        icon: "file-text", 
+        included: true,
+        frequency: "Aylık" 
+      },
+      { 
+        id: "f5", 
+        title: "7/24 teknik destek", 
+        description: "Gün boyu kesintisiz teknik destek hizmeti", 
+        icon: "phone", 
+        included: true,
+        frequency: "Sürekli" 
+      },
+      { 
+        id: "f6", 
+        title: "48 saat içinde müdahale garantisi", 
+        description: "Arıza durumunda hızlı yerinde müdahale garantisi", 
+        icon: "clock", 
+        included: true,
+        frequency: "Gerektiğinde" 
+      },
+      { 
+        id: "f7", 
+        title: "Öncelikli destek", 
+        description: "Tüm hizmet taleplerinizde öncelikli işlem", 
+        icon: "award", 
+        included: true,
+        frequency: "Sürekli" 
+      }
+    ],
+    images: [
+      "/lovable-uploads/7fd0f0c7-8235-4a7c-a3fe-6a888525fb9b.png",
       "/placeholder.svg"
     ]
   }
