@@ -1,9 +1,12 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { usePackage } from "@/contexts/PackageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
 import { 
   CheckCircle, 
   XCircle, 
@@ -59,6 +62,7 @@ export default function PackagesPage() {
   const { packages, setSelectedPackage } = usePackage();
   const navigate = useNavigate();
   const [view, setView] = useState<"cards" | "compare">("cards");
+  const { user } = useAuth();
   
   const handleSelectPackage = (packageId: string) => {
     setSelectedPackage(packageId);
@@ -67,7 +71,13 @@ export default function PackagesPage() {
 
   const handleGetQuote = (packageId: string) => {
     setSelectedPackage(packageId);
-    navigate("/quote");
+    
+    if (!user) {
+      toast.info("Teklif almak için önce giriş yapmalısınız.");
+      navigate("/login");
+    } else {
+      navigate("/quote");
+    }
   };
 
   const renderFeatureIcon = (iconName: string) => {
