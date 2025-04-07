@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 import { sendQuoteToOwner, formatQuoteForEmail } from "@/utils/quoteNotifications";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 export interface PackageFeature {
   id: string;
@@ -38,6 +39,7 @@ export interface QuoteDetails {
   totalPrice: number;
   quoteDate: Date;
   validUntil: Date;
+  userId?: string;
 }
 
 interface PackageContextType {
@@ -422,6 +424,7 @@ export const PackageProvider = ({ children }: { children: ReactNode }) => {
   const [packages] = useState<ServicePackage[]>(PACKAGES);
   const [selectedPackage, setSelectedPackageState] = useState<ServicePackage | null>(null);
   const [quoteDetails, setQuoteDetails] = useState<QuoteDetails | null>(null);
+  const { user } = useAuth();
 
   const setSelectedPackage = (packageId: string | null) => {
     if (!packageId) {
@@ -436,7 +439,7 @@ export const PackageProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const createQuote = (details: Partial<QuoteDetails>) => {
-    if (!selectedPackage) return;
+    if (!selectedPackage || !user) return;
 
     const validUntil = new Date();
     validUntil.setDate(validUntil.getDate() + 30);
@@ -455,7 +458,8 @@ export const PackageProvider = ({ children }: { children: ReactNode }) => {
       additionalNotes: details.additionalNotes,
       totalPrice: totalPrice,
       quoteDate: new Date(),
-      validUntil: validUntil
+      validUntil: validUntil,
+      userId: user.id // Add user ID to associate quote with this user
     };
 
     setQuoteDetails(newQuote);
@@ -467,12 +471,14 @@ export const PackageProvider = ({ children }: { children: ReactNode }) => {
       status: "approved",
       totalPrice: totalPrice * 1.2,
       packageId: selectedPackage.id,
-      plantCapacity: details.plantCapacity || 0
+      plantCapacity: details.plantCapacity || 0,
+      userId: user.id // Add user ID to the stored quote
     };
     
     const storedQuotes = localStorage.getItem('userQuotes');
     let quotes = storedQuotes ? JSON.parse(storedQuotes) : [];
     
+    // Add the new quote at the beginning of the array
     quotes = [quoteForStorage, ...quotes];
     
     localStorage.setItem('userQuotes', JSON.stringify(quotes));

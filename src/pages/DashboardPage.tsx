@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -33,14 +34,19 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // If we have a recent quote, add it to the list
+    // Only load quotes if user is logged in
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    
     const loadQuotes = async () => {
       await new Promise((resolve) => setTimeout(resolve, 300));
       
       // Create a list of quotes including the current one if it exists
       let quotesList = [];
       
-      if (quoteDetails && selectedPackage) {
+      if (quoteDetails && selectedPackage && user) {
         const newQuote = {
           id: `Q${new Date().getTime().toString().slice(-6)}`,
           packageName: selectedPackage.name,
@@ -48,20 +54,32 @@ export default function DashboardPage() {
           status: "approved",
           totalPrice: quoteDetails.totalPrice * 1.2, // Adding VAT
           packageId: selectedPackage.id,
-          plantCapacity: quoteDetails.plantCapacity
+          plantCapacity: quoteDetails.plantCapacity,
+          userId: user.id // Add user ID to associate quote with this user
         };
         quotesList.push(newQuote);
       }
       
       // Get quotes from localStorage if any
       const storedQuotes = localStorage.getItem('userQuotes');
-      if (storedQuotes) {
-        quotesList = [...quotesList, ...JSON.parse(storedQuotes)];
-      }
+      let allStoredQuotes = storedQuotes ? JSON.parse(storedQuotes) : [];
       
-      // Store updated quotes in localStorage
+      // Filter quotes to only show ones belonging to current user
+      // If quote has no userId (from before this update), don't show it to any new users
+      let userQuotes = allStoredQuotes.filter((quote: any) => 
+        quote.userId === user.id
+      );
+      
+      // Combine with current quote
+      quotesList = [...quotesList, ...userQuotes];
+      
+      // Store updated quotes in localStorage (maintaining all users' quotes)
       if (quoteDetails && selectedPackage) {
-        localStorage.setItem('userQuotes', JSON.stringify(quotesList));
+        const updatedAllQuotes = quotesList.length > 0 
+          ? [quotesList[0], ...allStoredQuotes.filter((q: any) => q.userId !== user.id || q.id !== quotesList[0].id)]
+          : allStoredQuotes;
+        
+        localStorage.setItem('userQuotes', JSON.stringify(updatedAllQuotes));
       }
       
       setQuotes(quotesList);
@@ -69,7 +87,7 @@ export default function DashboardPage() {
     };
 
     loadQuotes();
-  }, [quoteDetails, selectedPackage, packages]);
+  }, [quoteDetails, selectedPackage, packages, user]);
 
   if (!user) {
     return (
@@ -225,16 +243,14 @@ export default function DashboardPage() {
                     Oluşturduğunuz tekliflerin durumunu takip edin
                   </CardDescription>
                 </div>
-                {quotes.length > 0 && (
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="text-xs"
-                    onClick={() => navigate("/quote")}
-                  >
-                    Yeni Teklif Oluştur
-                  </Button>
-                )}
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="text-xs"
+                  onClick={() => navigate("/quote")}
+                >
+                  Yeni Teklif Oluştur
+                </Button>
               </CardHeader>
               <CardContent>
                 {loading ? (
