@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, ReactNode } from "react";
 import { sendQuoteToOwner, formatQuoteForEmail } from "@/utils/quoteNotifications";
 import { toast } from "sonner";
@@ -477,18 +478,23 @@ export const PackageProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem('userQuotes', JSON.stringify(quotes));
     
     try {
+      // Format the quote data for email
       const formattedQuote = formatQuoteForEmail(newQuote, selectedPackage);
-      const sendResult = sendQuoteToOwner({
+      
+      // Send the quote notification (now properly handling the Promise)
+      sendQuoteToOwner({
         ...formattedQuote,
         quoteData: newQuote,
         packageData: selectedPackage
+      }).then(result => {
+        if (result.success) {
+          console.log("Quote successfully sent to site owner");
+        } else {
+          console.error("Failed to send quote notification to site owner");
+        }
+      }).catch(error => {
+        console.error("Error sending quote notification:", error);
       });
-      
-      if (sendResult.success) {
-        console.log("Quote successfully sent to site owner");
-      } else {
-        console.error("Failed to send quote notification to site owner");
-      }
     } catch (error) {
       console.error("Error sending quote notification:", error);
     }
