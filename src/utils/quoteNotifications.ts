@@ -1,12 +1,10 @@
-
 // This file contains utilities for sending quote notifications to the site owner
 import emailjs from '@emailjs/browser';
 
 // EmailJS servis bilgileri
-// NOT: Bu bilgiler gerçek bir uygulamada güvenli bir şekilde saklanmalıdır.
-const EMAIL_SERVICE_ID = 'YOUR_EMAILJS_SERVICE_ID';
-const EMAIL_TEMPLATE_ID = 'YOUR_EMAILJS_TEMPLATE_ID';
-const EMAIL_USER_ID = 'YOUR_EMAILJS_USER_ID';
+const EMAIL_SERVICE_ID = 'service_2pq49b8';  // EmailJS Dashboard'dan alınan service ID
+const EMAIL_TEMPLATE_ID = 'template_u2ifjvk';  // EmailJS Dashboard'dan alınan template ID
+const EMAIL_USER_ID = 'Vx2iP4szPar7xhQWi';  // EmailJS Dashboard'dan alınan public key
 
 /**
  * Sends the quote to the site owner using EmailJS
@@ -22,7 +20,7 @@ export const sendQuoteToOwner = async (quoteDetails: any) => {
       {
         subject: quoteDetails.subject,
         message: quoteDetails.body,
-        to_email: 'site.owner@example.com', // Site sahibinin e-posta adresi
+        to_email: 'site.owner@example.com', // Site sahibinin gerçek e-posta adresi
       },
       EMAIL_USER_ID
     );
